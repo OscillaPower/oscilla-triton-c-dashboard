@@ -143,6 +143,7 @@ export default function Home(props: HomeProps) {
                 <a
                   href="http://cdip.ucsd.edu/m/products/?stn=225p1"
                   target="_blank"
+                  rel="noreferrer"
                 >
                   <img
                     src="http://cdip.ucsd.edu/themes/media/images/plots/buoy_ww3.gd?stn=225&tz=UTC&units=standard"
