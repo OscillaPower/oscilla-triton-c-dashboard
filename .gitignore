@@ -39,3 +39,5 @@ next-env.d.ts
 /data
 /package
 /archive
+/frontend/.next/
+/frontend/node_modules/
