@@ -1,0 +1,2 @@
+*/1 * * * * CANARY_REQUEST_PRODUCTION=TRUE python3 /app/CanaryRequest.py
+

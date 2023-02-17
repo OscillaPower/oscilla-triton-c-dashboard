@@ -1,0 +1,32 @@
+# Python Base Image
+FROM ubuntu:23.04
+
+# giving user name. which is not executed by docker
+MAINTAINER CanaryRequestCronJob
+
+# Creating Working Dir
+WORKDIR /app
+
+# Requirements for matplotlib?
+RUN apt-get update && apt-get install -y python3 python3-pip cron
+
+
+RUN pip3 install --upgrade setuptools
+# RUN /usr/local/bin/python3 -m pip install --upgrade pip
+
+COPY requirements.txt /tmp/
+RUN pip3 install --requirement /tmp/requirements.txt
+COPY . /tmp/
+
+# Copying the crontab file 
+COPY crontab /etc/cron.d/crontab
+
+# Copy the each file from current dir to `app` in docker container
+ADD . /crontab
+ADD CanaryRequest.py /app/CanaryRequest.py
+
+# run the crontab file
+RUN crontab /etc/cron.d/crontab
+
+# Executing crontab command
+CMD ["cron", "-f"]
