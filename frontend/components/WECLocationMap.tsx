@@ -74,6 +74,7 @@ export const WECLocationMap = (props: WECLocationMapProps) => {
             <a
               href="http://cdip.ucsd.edu/m/products/?stn=225p1"
               target="_blank"
+              rel="noreferrer"
             >
               KANEOHE BAY, WETS, HI - 225
             </a>
