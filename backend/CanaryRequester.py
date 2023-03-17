@@ -840,10 +840,10 @@ if __name__ == "__main__":
 
     gps_coords_df = triton_c.request_gps_coords(short_time_period)
 
-    deployment_state_df = triton_c.request_deployment_state(long_time_period)
+    deployment_state_df = triton_c.request_deployment_state(short_time_period)
 
     power_performance_data_df = triton_c.request_power_performance_data(
-        long_time_period
+        short_time_period
     )
 
     triton_c.save()
