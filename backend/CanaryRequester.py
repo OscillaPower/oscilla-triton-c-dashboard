@@ -1,21 +1,12 @@
-# Abstracts access to the Oscilla Power Triton-C Canary server
-# Follows Canary 21.1 documentation: https://readapi.canarylabs.com/21.1/
-# To build the dashboard we need to access specific canary api endpoints
-# The `CanaryRequest` class queries the server for the available endpoints and allows actions the validated (WIP) endpoints
-
-from datetime import datetime
-import logging
-import os
 import socket
 
 import pandas as pd
 import requests
 
 
-# Cleanly request data from the canary server
-class CanaryRequest:
-    def __init__(self):
-        self.ip = "10.0.2.8"
+# Abstracts access to the Oscilla Power Triton-C Canary server
+# Follows Canary 21.1 documentation: https://readapi.canarylabs.com/21.1/
+class CanaryRequester:
         self.port = "55235"
         self.entry_url = f"http://{self.ip}:{self.port}/api/v2/"
         self.raw_tags = []
