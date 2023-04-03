@@ -40,6 +40,19 @@ class CanaryRequest:
 
         self.logger = Logger()
 
+        self.all_data_request_bundle = {
+            "WIN-SUARIOMU79L.Dataset 1.Pos_Lat": "GPS_Lat",
+            "WIN-SUARIOMU79L.Dataset 1.Pos_Long": "GPS_Lng",
+            "WIN-SUARIOMU79L.Dataset 1.Is_Deployed": "Is_Deployed",
+            "WIN-SUARIOMU79L.Dataset 1.Is_Maint": "Is_Maint",
+            "WIN-SUARIOMU79L.Dataset 1.Mean_Wave_Period": "Mean_Wave_Period",
+            "WIN-SUARIOMU79L.Dataset 1.Wave_Height": "Mean_Wave_Height",
+            "WIN-SUARIOMU79L.Dataset 1.JI1607.PV": "PTO_Bow_Power_kW",
+            "WIN-SUARIOMU79L.Dataset 1.JI2607.PV": "PTO_Starboard_Power_kW",
+            "WIN-SUARIOMU79L.Dataset 1.JI3607.PV": "PTO_Port_Power_kW",
+        }
+        self.all_data_df = None
+
         # Dict of tags to request and specification of the output DataFrame column names
         self.power_performance_request_bundle = {
             "WIN-SUARIOMU79L.Dataset 1.Is_Deployed": "Is_Deployed",
@@ -263,6 +276,26 @@ class CanaryRequest:
         df: pd.DataFrame = df.reset_index(drop=True)
 
         return df
+
+    def request_all_data(self, duration_string):
+        response = self.request_multiple_timeseries(
+            self.all_data_request_bundle, duration_string, self.default_max_size
+        )
+
+        if isinstance(response, pd.DataFrame):
+            df: pd.DataFrame = response
+        else:
+            return None
+
+        df["Total_Power_kW"] = (
+            df["PTO_Bow_Power_kW"]
+            + df["PTO_Port_Power_kW"]
+            + df["PTO_Starboard_Power_kW"]
+        )
+
+        self.all_data_df = df
+
+        return self.all_data_df
 
     def request_gps_coords(self, duration_string):
         self.gps_coords_df = self.request_multiple_timeseries(
