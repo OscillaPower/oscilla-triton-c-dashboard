@@ -256,24 +256,31 @@ class CanaryRequest:
         # Convert the response dict into a dataframe with the timestamp string as the index
         df = pd.DataFrame.from_dict(response_dict, orient="index")
 
-        # Extract "Timestamp" into a separate column and create a new index
-        df["Timestamp"] = df.index
-        df = df.reset_index(level=0)
+        # Set Raw_Timestamp to the "t" values from the response
+        df["Raw_Timestamp"] = response_dict.keys()
 
+        # Set the index to unix epoch ns integer
+        timestamps = pd.to_datetime(df["Raw_Timestamp"])
+        df.index = pd.to_numeric(timestamps)
+
+        # Sort the response from newest to oldest
+        df = df.sort_index(ascending=False)
+
+        # Below keeps parquet happy, it may be needed if the above approach doesn't work
         # Convert the timestamp string to a pandas timestamp
         # df["Timestamp"] = pd.to_datetime(df["Timestamp"])
         # This timestamp conversion keeps parquet happy
-        df["Timestamp"] = df["Timestamp"].astype("datetime64[s]")
+        # df["Timestamp"] = df["Raw_Timestamp"].astype("datetime64[s]")
 
         # Sort by timestamp with the most recent values first
-        df = df.sort_values("Timestamp", ascending=False)
+        # df = df.sort_values("Timestamp", ascending=False)
 
         # Change the column order so timestamp comes before everything else
-        column_names.insert(0, "Timestamp")
-        df = df[column_names]
+        # column_names.insert(0, "Timestamp")
+        # df = df[column_names]
 
         # Reset the index so it starts from zero
-        df: pd.DataFrame = df.reset_index(drop=True)
+        # df: pd.DataFrame = df.reset_index(drop=True)
 
         return df
 
