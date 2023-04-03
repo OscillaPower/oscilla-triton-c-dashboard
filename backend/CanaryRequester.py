@@ -30,13 +30,8 @@ class CanaryRequest:
         # and canary server is running consistently
         self.default_max_size = 100_000
 
-        logging.basicConfig(
-            filename=self.logging_dir,
-            filemode="a",
-            format="%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s",
-            datefmt="%Y_%m_%d-%H:%M:%S",
-            level=logging.INFO,
-        )
+        # List of all tags available on the canary server
+        self.raw_tags = []
 
         self.logger = Logger()
 
