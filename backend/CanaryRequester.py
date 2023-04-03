@@ -57,8 +57,8 @@ class CanaryRequest:
         self.power_performance_request_bundle = {
             "WIN-SUARIOMU79L.Dataset 1.Is_Deployed": "Is_Deployed",
             "WIN-SUARIOMU79L.Dataset 1.Is_Maint": "Is_Maint",
-            "WIN-SUARIOMU79L.Dataset 1.Mean_Wave_Period": "Mean_Wave_Period_Te",
-            "WIN-SUARIOMU79L.Dataset 1.Wave_Height": "Mean_Wave_Height_Hm0",
+            "WIN-SUARIOMU79L.Dataset 1.Mean_Wave_Period": "Mean_Wave_Period",
+            "WIN-SUARIOMU79L.Dataset 1.Wave_Height": "Mean_Wave_Height",
             "WIN-SUARIOMU79L.Dataset 1.JI1607.PV": "PTO_Bow_Power_kW",
             "WIN-SUARIOMU79L.Dataset 1.JI2607.PV": "PTO_Starboard_Power_kW",
             "WIN-SUARIOMU79L.Dataset 1.JI3607.PV": "PTO_Port_Power_kW",
@@ -325,7 +325,7 @@ class CanaryRequest:
         else:
             return None
 
-        df["Total_Power"] = (
+        df["Total_Power_kW"] = (
             df["PTO_Bow_Power_kW"]
             + df["PTO_Port_Power_kW"]
             + df["PTO_Starboard_Power_kW"]
