@@ -107,6 +107,10 @@ class OscillaPackager:
 
         self.cleanly_create_directory(this_destination)
 
+        # Remove existing files in destination directory
+        for f in os.listdir(this_destination):
+            os.remove(os.path.join(this_destination, f))
+
         this_zip_destination = os.path.join(self.package_directory, name)
 
         files, folders = self.get_sanitized_files_and_folders(this_base_dir)
