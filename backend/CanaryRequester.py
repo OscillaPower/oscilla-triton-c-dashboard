@@ -79,8 +79,6 @@ class CanaryRequest:
         self.deployment_state_duration_string = None
         self.deployment_state_save_dir = "deployment_state"
 
-        self.setup()
-
     def setup(self):
         self.logger.info(__name__, "Beginning Triton-C Canary Request")
         is_online = self.is_online()
