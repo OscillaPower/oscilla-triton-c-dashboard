@@ -36,7 +36,7 @@ class CanaryRequest:
             level=logging.INFO,
         )
 
-        logging.info("Triton-C: Init Logging")
+        self.logger = Logger()
 
         # Dict of tags to request and specification of the output DataFrame column names
         self.power_performance_request_bundle = {
@@ -72,20 +72,21 @@ class CanaryRequest:
         self.setup()
 
     def setup(self):
-        logging.info("Beginning Triton-C Canary Request")
+        self.logger.info(__name__, "Beginning Triton-C Canary Request")
         is_online = self.is_online()
         if is_online != True:
             message = (
                 f"Triton-C Canary Server @ {self.entry_url} not responding! Exiting..."
             )
-            logging.error(message)
+            self.logger.error(__name__, message)
             exit(message)
 
         self.init_tags()
 
         if len(self.raw_tags) < 1:
-            logging.warning(
-                f"Triton-C Canary Server returned {len(self.raw_tags)} tags! Proceeding, but there may be errors..."
+            self.logger.warning(
+                __name__,
+                f"Triton-C Canary Server returned {len(self.raw_tags)} tags! Proceeding, but there may be errors...",
             )
 
         return True
@@ -134,9 +135,10 @@ class CanaryRequest:
     def request_endpoint(self, endpoint, params):
         try:
             result = requests.get(f"{self.entry_url}{endpoint}", params)
-        except requests.exceptions.RequestsDependencyWarning as e:
-            logging.error(
-                f"Request: {self.entry_url}{endpoint} with params: {params} failed!"
+        except requests.exceptions.RequestException as e:
+            self.logger.error(
+                __name__,
+                f"Request: {self.entry_url}{endpoint} with params: {params} failed!",
             )
             raise SystemExit(e)
 
@@ -226,7 +228,10 @@ class CanaryRequest:
         num_responses = len(response_dict.keys())
 
         if num_responses == 0:
-            logging.error(f"Timeseries request: {tags} returned {num_responses}.")
+            self.logger.error(
+                __name__,
+                f"Timeseries request: {tags} returned {num_responses} responses.",
+            )
             return None
 
         # Convert the response dict into a dataframe with the timestamp string as the index
