@@ -41,3 +41,7 @@ next-env.d.ts
 /archive
 /frontend/.next/
 /frontend/node_modules/
+/data_archive
+data.zip
+/logs
+/notebooks/.ipynb_checkpoints
