@@ -205,9 +205,11 @@ class CanaryRequester:
 
         response_tags = list(data.keys())
 
-        # To convert the response into a DataFrame we need to iterate over each set of responses and map the values to timestamps
-        # We do this by creating a dictionary with timestamps as keys and values as named values
-        # This organized the canary response into a sane format for further processing
+        # To convert the response into a DataFrame we need to iterate over each
+        # set of responses and map the values to timestamps. We do this by
+        # creating a dictionary with timestamps as keys and values as named
+        # values. This organizes the canary response into a sane format for
+        # further processing
         response_dict = {}
 
         empty_row = {}
