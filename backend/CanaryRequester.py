@@ -3,15 +3,15 @@ import socket
 import pandas as pd
 import requests
 
+from Logger import Logger
 
 # Abstracts access to the Oscilla Power Triton-C Canary server
 # Follows Canary 21.1 documentation: https://readapi.canarylabs.com/21.1/
 class CanaryRequester:
+    def __init__(self, ip_address):
+        self.ip = ip_address
         self.port = "55235"
         self.entry_url = f"http://{self.ip}:{self.port}/api/v2/"
-        self.raw_tags = []
-        self.save_dir = "../data"
-        self.logging_dir = "../logs/CanaryRequest.log"
 
         # This dictates the number of responses before pagination kicks in. To
         # simplify this code we set this to a relatively large number and run
