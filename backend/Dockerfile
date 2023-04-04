@@ -10,6 +10,8 @@ WORKDIR /app
 # Requirements for matplotlib?
 RUN apt-get update && apt-get install -y python3 python3-pip cron
 
+# Requirements for sqlite
+RUN apt-get install -y sqlite3 libsqlite3-dev
 
 RUN pip3 install --upgrade setuptools
 # RUN /usr/local/bin/python3 -m pip install --upgrade pip
