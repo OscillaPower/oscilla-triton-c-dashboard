@@ -59,7 +59,7 @@ The local filesystem must be mounted for reading and writing using `-v`. We spec
 Backend Docker run command:
 
 ```sh
-sudo docker run -d -v /home/nrel@oscillapower.local/dashboard/data:/home/nrel@oscillapower.local/dashboard/data -v /home/nrel@oscillapower.local/dashboard/logs:/home/nrel@oscillapower.local/dashboard/logs backend
+sudo docker run -d -v /home/nrel@oscillapower.local/dashboard/data:/home/nrel@oscillapower.local/dashboard/data -v /home/nrel@oscillapower.local/dashboard/logs:/home/nrel@oscillapower.local/dashboard/logs -v /home/nrel@oscillapower.local/dashboard/frontend/public:/home/nrel@oscillapower.local/dashboard/frontend/public backend
 ```
 
 ### Visualization

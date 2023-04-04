@@ -1,2 +1,4 @@
-*/1 * * * * CANARY_REQUEST_PRODUCTION=TRUE python3 /app/CanaryRequest.py
+*/5 * * * * TRITON_C_SERVER=TRUE python3 /app/collect_WEC_data.py
+*/30 * * * * TRITON_C_SERVER=TRUE python3 /app/collect_spectra_data.py
+*/30 * * * * TRITON_C_SERVER=TRUE python3 /app/build_visualizations.py
 
