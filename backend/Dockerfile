@@ -20,6 +20,9 @@ COPY requirements.txt /tmp/
 RUN pip3 install --requirement /tmp/requirements.txt
 COPY . /tmp/
 
+# `cron`
+RUN touch /var/log/cron.log
+
 # Copying the crontab file
 COPY crontab /etc/cron.d/crontab
 
@@ -33,4 +36,4 @@ ADD build_visualizations.py /app/build_visualizations.py
 RUN crontab /etc/cron.d/crontab
 
 # Executing crontab command
-CMD ["cron", "-f"]
+CMD cron && tail -f /var/log/cron.log
