@@ -28,9 +28,7 @@ COPY crontab /etc/cron.d/crontab
 
 # Copy runner scripts from current dir to `app` in docker container
 ADD . /crontab
-ADD collect_WEC_data.py /app/collect_WEC_data.py
-ADD collect_spectra_data.py /app/collect_spectra_data.py
-ADD build_visualizations.py /app/build_visualizations.py
+ADD *.py /app/
 
 # run the crontab file
 RUN crontab /etc/cron.d/crontab
