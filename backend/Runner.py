@@ -30,6 +30,7 @@ class Runner:
     # 5 minutes * 10 hz = 60 * 10 * 10 = 3000
     # If we are not collecting all data increase the value of CanaryRequester.default_max_size
     def collect_WEC_data(self):
+        self.logger.info(__name__, "Starting collect_WEC_data...")
         try:
             last_10_min = "Now-10Min"
             # last_hour = "Now-1Hour"
@@ -48,6 +49,8 @@ class Runner:
         except Exception as e:
             self.logger.error("collect_WEC_data", e)
 
+        self.logger.info(__name__, "Finished collect_WEC_data!")
+
     # Set up the database from saved files
     # Should run once to initialize the database
     def populate_WEC_data(self):
@@ -63,13 +66,16 @@ class Runner:
     # Updates every hour
     # Should run every half hour
     def collect_spectra_data(self):
+        self.logger.info(__name__, "Starting collect_spectra_data...")
         try:
             self.spectra.update_spectra()
         except Exception as e:
             self.logger.error("collect_spectra_data", e)
+        self.logger.info(__name__, "Finished collect_spectra_data!")
 
     # Run every half hour
     def build_visualizations(self):
+        self.logger.info(__name__, "Starting build_visualizations...")
         try:
             pto_col_names = [
                 "PTO_Bow_Power_kW",
@@ -108,6 +114,8 @@ class Runner:
                         )
         except Exception as e:
             self.logger.error("build_visualizations", e)
+
+        self.logger.info(__name__, "Finished build_visualizations!")
 
 
 if __name__ == "__main__":
