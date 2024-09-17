@@ -332,27 +332,41 @@ SELECT Timestamp, Is_Deployed, Is_Maint, PTO_Bow_Power_kW, PTO_Starboard_Power_k
 CREATE TABLE spectra(
     Timestamp INT UNIQUE,
     Raw_Timestamp TEXT DEFAULT NULL,
-    Te REAL DEFAULT NULL,
-    Hm0 REAL DEFAULT NULL,
-    J REAL DEFAULT NULL,
+    Spectral_Hm0 REAL DEFAULT NULL,
+    Spectral_Te REAL DEFAULT NULL,
+    Spectral_J REAL DEFAULT NULL,
+    Spectral_Tavg REAL DEFAULT NULL,
+    Spectral_Tm REAL DEFAULT NULL,
+    Spectral_Tp REAL DEFAULT NULL,
+    Spectral_Tz REAL DEFAULT NULL,
+    WMI_waveHs REAL DEFAULT NULL,
+    WMI_waveTp REAL DEFAULT NULL,
+    WMI_waveTa REAL DEFAULT NULL,
+    WMI_waveDp REAL DEFAULT NULL,
+    WMI_wavePeakPSD REAL DEFAULT NULL,
+    WMI_waveTz REAL DEFAULT NULL
 )
         """
         self.execute_sql(command)
 
     def insert_spectra(self, df):
-        df.to_sql("spectra", self.con, if_exists="append", index_label="Timestamp")
+        # df.to_sql("spectra", self.con, if_exists="append", index_label="Timestamp")
+        df.to_sql("spectra", self.con, if_exists="append", index=False)
         self.con.commit()
 
     def select_spectra(self):
         df = pd.read_sql(
             f"""
-SELECT Timestamp, Raw_Timestamp, Te, Hm0, J
+SELECT Timestamp, Raw_Timestamp, Spectral_Te, Spectral_Hm0, Spectral_J
     FROM spectra
     ORDER BY Timestamp;
 """,
             self.con,
             index_col="Timestamp",
         )
+
+        df = df.rename(columns=lambda x: x.strip("Spectral_"))
+
         return self.set_df_timestamp_to_index(df)
 
     def select_matching_spectra_timestamps(self, timestamp_list):
