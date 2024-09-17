@@ -1,5 +1,5 @@
-# Python Base Image
-FROM ubuntu:23.04
+# Use a base Python image
+FROM python:3.10-slim
 
 # giving user name. which is not executed by docker
 MAINTAINER CanaryRequestCronJob
