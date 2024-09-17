@@ -5,6 +5,7 @@ import requests
 
 from Logger import Logger
 
+
 # Abstracts access to the Oscilla Power Triton-C Canary server
 # Follows Canary 21.1 documentation: https://readapi.canarylabs.com/21.1/
 class CanaryRequester:

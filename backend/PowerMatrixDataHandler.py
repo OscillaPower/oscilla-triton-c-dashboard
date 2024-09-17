@@ -38,6 +38,7 @@ import pandas as pd
 #     * The restriction is in the capture length calculation:  `L = wave.performance.capture_length(P, J)`
 #         * The length of the power data needs to be the same as the length of the number of spectra entries
 
+
 # Validate spectra, energy period (Te), significant wave height (Hm0), and WEC power
 # Inputs are all spectra and all wec power
 # Ensure inputs are consistent for each measurement period

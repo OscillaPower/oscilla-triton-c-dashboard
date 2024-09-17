@@ -4,7 +4,6 @@ from pathlib import Path
 class DataFrameArchiver:
     @staticmethod
     def save_df(df, path, filename):
-
         # Ensure we do not modify the original dataframe
         df = df.copy()
 

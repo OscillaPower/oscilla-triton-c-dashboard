@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 
+
 # DirectoryManager abstracts directory names. This provides multiple benefits:
 #   1. Co-locates directory names for all other classes
 #   2. Allows the server and developer to use common functions and only hard codes the server directory in one place

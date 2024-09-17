@@ -3,6 +3,7 @@ import requests
 
 from Logger import Logger
 
+
 # Download and parse NDBC real time raw spectral wave data into pandas
 # DataFrame
 class NDBCRealTimeRawSpectralParser:

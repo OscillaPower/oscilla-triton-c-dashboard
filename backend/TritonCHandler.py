@@ -7,7 +7,6 @@ from CanaryRequester import CanaryRequester
 from DataHandler import DataHandler
 from DirectoryManager import DirectoryManager
 from FileManager import FileManager
-
 from SQLite import SQLite
 
 
