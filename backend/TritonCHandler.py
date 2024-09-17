@@ -42,15 +42,16 @@ class TritonC(DataHandler):
             df = df.rename(columns=transpose_dict)
 
             if df is not None:
-                df.index = pd.to_numeric(df["Timestamp"])
+                if "Timestamp" in df.columns:
+                    df.index = pd.to_numeric(df["Timestamp"])
 
             df_list.append(df)
 
         df = pd.concat(df_list)
 
-        df.index = pd.to_numeric(df["Timestamp"])
+        # df.index = pd.to_numeric(df["Timestamp"])
         df.index.name = "Timestamp"
-        df = df.drop(["Timestamp"], axis=1)
+        df = df.drop(["Timestamp"], axis=1, errors="ignore")
 
         # Remove rows with where the indexes are duplicates
         # Because the SQL timestamp is unique, this is important to do before insertion
