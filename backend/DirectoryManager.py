@@ -7,7 +7,7 @@ from pathlib import Path
 #   3. Creates directories that don't exist
 class DirectoryManager:
     def __init__(self):
-        if os.getenv("TRITON_C_SERVER") != None:
+        if os.getenv("TRITON_C_SERVER") is not None:
             self.base_dir = Path("/home/nrel@oscillapower.local/dashboard")
         else:
             # We should be in the "backend" directory
