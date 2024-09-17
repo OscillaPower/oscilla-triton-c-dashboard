@@ -19,19 +19,24 @@ class DataHandler:
             # Basically, these timestamps already exist
             existing_timestamps = extract_timestamp_function(pd.to_numeric(df.index))
 
-            # Conversion of above into workable format (list of ints)
-            existing_timestamps = list(pd.to_numeric(existing_timestamps["Timestamp"]))
+            if existing_timestamps.empty is False:
+                # Conversion of above into workable format (list of ints)
+                existing_timestamps = list(
+                    pd.to_numeric(existing_timestamps["Timestamp"])
+                )
 
-            # Unix ns timestamps of data ready for insertion
-            insertion_timestamps = list(pd.to_numeric(df.index))
+                # Unix ns timestamps of data ready for insertion
+                insertion_timestamps = list(pd.to_numeric(df.index))
 
-            # Calculation to get list of unix ns timestamps that are NOT in the database
-            new_timestamps = list(set(insertion_timestamps) - set(existing_timestamps))
-            # Conversion to workable format
-            new_timestamps = pd.to_numeric(new_timestamps)
+                # Calculation to get list of unix ns timestamps that are NOT in the database
+                new_timestamps = list(
+                    set(insertion_timestamps) - set(existing_timestamps)
+                )
+                # Conversion to workable format
+                new_timestamps = pd.to_numeric(new_timestamps)
 
-            # Filter the insertion dataframe to contain only new timestamps
-            df = df[df.index.isin(new_timestamps)]
+                # Filter the insertion dataframe to contain only new timestamps
+                df = df[df.index.isin(new_timestamps)]
 
         # This function can error out if the existing timestamp function fails.
         # In this case we assume that the database has no data and we can
