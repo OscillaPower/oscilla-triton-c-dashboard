@@ -24,8 +24,8 @@ class DirectoryManager:
 
         # Path can safely handle slashes in the filename
         self.triton_c = self.build_path(f"{self.data_dir}/triton_c")
-        self.raw_spectra = self.build_path(f"{self.data_dir}/raw_spectra")
-        self.spectra_calc = self.build_path(f"{self.data_dir}/spectra_calc")
+        self.spectra_cdip_nc = self.build_path(f"{self.data_dir}/cdip_nc")
+        self.spectra_calc = self.build_path(f"{self.data_dir}/spectra_calc_df")
 
         # These are old directories that are used to populate data
         self.power_performance = self.build_path(f"{self.data_dir}/power_performance")
