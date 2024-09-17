@@ -35,6 +35,7 @@ class OscillaPackager:
             ".ipynb_checkpoints",
             "package",
             "archive",
+            "__pycache__",
         ]
 
         self.source_directory = os.path.dirname(os.path.realpath(__file__))
