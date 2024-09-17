@@ -50,6 +50,18 @@ class FileManager:
             "spectra_calc", path, df, station, first_timestamp, last_timestamp
         )
 
+    def get_existing_cdip_realtime_nc_path(self, station):
+        filename = f"concat_{station}p1_rt.nc"
+        path = self.dirs.spectra_cdip_nc
+        return Path(path, filename)
+
+    # def update_cdip_realtime_nc(self, new_ds, station, first_timestamp, last_timestamp):
+    def update_cdip_realtime_nc(self, new_ds, station):
+        filename = f"concat_{station}p1_rt.nc"
+        path = self.dirs.cdip_nc
+
+        new_ds.to_netcdf(Path(path, filename))
+
     def save_spectra_calc(self, df, station, first_timestamp, last_timestamp):
         path = self.dirs.spectra_calc
         self.save_spectra(
