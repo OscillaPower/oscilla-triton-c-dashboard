@@ -1,8 +1,8 @@
 # Use a base Python image
 FROM python:3.10-slim
 
-# giving user name. which is not executed by docker
-MAINTAINER CanaryRequestCronJob
+# Maintainer information
+LABEL maintainer="CanaryRequestCronJob"
 
 # Creating Working Dir
 WORKDIR /app
