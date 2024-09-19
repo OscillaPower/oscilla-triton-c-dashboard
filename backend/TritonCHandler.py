@@ -160,7 +160,7 @@ class TritonC(DataHandler):
         if self.server is not None:
             coords_df = self.server.request_gps_coords(canary_time_interval)
             if coords_df is not None:
-                self.file_manager.save_power_performance(coords_df)
+                self.file_manager.save_gps_coords(coords_df)
                 super(TritonC, self).unique_insert(
                     coords_df,
                     self.db.insert_power_performance,
