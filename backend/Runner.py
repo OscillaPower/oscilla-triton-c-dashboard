@@ -89,8 +89,18 @@ class Runner:
             ]
 
             spectra_df = self.spectra.read_spectra()
+            # Create a nanosecond timestamp index
+            spectra_df.index = pd.to_datetime(
+                spectra_df.index, unit="s", origin="unix", utc=True
+            )
+            spectra_df = spectra_df.sort_index()
 
             power_df = self.triton_c.db.select_all_triton_c()
+            # Create a nanosecond timestamp index
+            power_df.index = pd.to_datetime(
+                power_df.index, unit="ns", origin="unix", utc=True
+            )
+            power_df = power_df.sort_index()
 
             viz_generator = PowerMatrixImageGenerator()
 

@@ -4,6 +4,8 @@ from mhkit import wave
 import numpy as np
 import pandas as pd
 
+from Logger import Logger
+
 # Steps to generate the power performance Visualization
 # Following: https://mhkit-software.github.io/MHKiT/wave_example.html
 # 1. Load NDBC Buoy Data:
@@ -47,6 +49,10 @@ import pandas as pd
 class PowerMatrixDataHandler:
     # Aggregrate power data into hourly averaged chunks
     # Return a df of "UTC_Timestamps" and average power data in watts by
+
+    def __init__(self):
+        self.logger = Logger()
+
     def average_power_data(self, power_df, column):
         # Per 62600-100 8.3.1:
         # Filter out all data that is not 2hz or faster for the whole hour
@@ -111,22 +117,6 @@ class PowerMatrixDataHandler:
             [valid_timestamps, valid_power_kw], ["UTC_Timestamp", f"{column}"]
         ).T
 
-    # Get spectra for the timestamps where power data is available
-    def get_spectra_for_available_power_data(self, utc_timestamps, spectra_df):
-        power_timestamps = pd.to_numeric(utc_timestamps).to_numpy()
-
-        spectra_df_timestamps = pd.to_numeric(spectra_df.index).to_numpy()
-
-        common_timestamp_spectra_indexes = [
-            np.where(spectra_df_timestamps == x)[0][0]
-            for x in power_timestamps
-            if x in spectra_df_timestamps
-        ]
-
-        result = spectra_df.iloc[common_timestamp_spectra_indexes]
-
-        return result
-
     # Follow
     # https://github.com/MHKiT-Software/MHKiT-Python/blob/master/examples/wave_example.ipynb
     # to calculate the power matrix data
@@ -134,28 +124,36 @@ class PowerMatrixDataHandler:
         valid_average_power_df = self.average_power_data(power_df, column)
 
         if valid_average_power_df.empty:
+            self.logger.info(
+                __name__, "Not enough power data to calculate power matrix. Returning.."
+            )
             return
 
-        valid_spectra_df = self.get_spectra_for_available_power_data(
-            valid_average_power_df["UTC_Timestamp"], spectra_df
-        )
+        combined_df = pd.concat([valid_average_power_df, spectra_df], axis="index")
+        # Drop anything with nan
+        combined_df = combined_df.dropna(how="any")
 
-        utc_timestamps = valid_average_power_df["UTC_Timestamp"]
+        if combined_df.empty:
+            self.logger.info(
+                __name__,
+                "Not enough combined data to calculate power matrix. Returning..",
+            )
+            return
 
         P = np.array(
-            np.abs(valid_average_power_df[column].to_numpy()),
+            np.abs(combined_df[column].to_numpy()),
             dtype="float64",
         )
 
         # These are pre calculated in SpectraHandler.update_spectra
         # Energy Period
-        Te = valid_spectra_df["Te"].to_numpy()
+        Te = combined_df["Te"].to_numpy()
 
         # Significant Wave Height
-        Hm0 = valid_spectra_df["Hm0"].to_numpy()
+        Hm0 = combined_df["Hm0"].to_numpy()
 
         # Energy Flux
-        J = valid_spectra_df["J"].to_numpy()
+        J = combined_df["J"].to_numpy()
 
         # Capture Length
         L = wave.performance.capture_length(P, J)
