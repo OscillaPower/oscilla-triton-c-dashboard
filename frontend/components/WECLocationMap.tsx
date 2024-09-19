@@ -32,7 +32,13 @@ const attribution =
 const attributionPrefix = `Oscilla Power Triton-C | ${new Date().getFullYear()} <a href='www.oscillapower.com'>Oscilla Power</a>`;
 
 interface WECLocationMapProps {
-  coords: number[][];
+  coords: GPSCoord[];
+}
+
+export interface GPSCoord {
+  timestamp: string;
+  lat: number;
+  lng: number;
 }
 
 export const WECLocationMap = (props: WECLocationMapProps) => {
@@ -40,8 +46,8 @@ export const WECLocationMap = (props: WECLocationMapProps) => {
   let lastUsedLng: number = 0;
 
   const currentData = props.coords[0];
-  const currentLat = currentData[1];
-  const currentLng = currentData[2];
+  const currentLat = currentData.lat;
+  const currentLng = currentData.lng;
 
   return (
     <Box
@@ -81,12 +87,10 @@ export const WECLocationMap = (props: WECLocationMapProps) => {
           </Tooltip>
         </Marker>
 
-        {props.coords.slice(0, 1).map((coord: number[], i: number) => {
-          const timestamp = coord[0];
-          const lat = coord[1];
-          const lng = coord[2];
-          // const date = new Date(rawTimestamp);
-          // const timestampString = date.toString();
+        {props.coords.slice(0, 1).map((coord: GPSCoord, i: number) => {
+          const timestamp = coord.timestamp;
+          const lat = coord.lat;
+          const lng = coord.lng;
 
           if ((lastUsedLat !== lat && lastUsedLng !== lng) || i == 0) {
             return (
