@@ -1,3 +1,5 @@
+import shutil
+
 from datetime import datetime
 from pathlib import Path
 
@@ -55,12 +57,14 @@ class FileManager:
         path = self.dirs.spectra_cdip_nc
         return Path(path, filename)
 
-    # def update_cdip_realtime_nc(self, new_ds, station, first_timestamp, last_timestamp):
     def update_cdip_realtime_nc(self, new_ds, station):
         filename = f"concat_{station}p1_rt.nc"
-        path = self.dirs.cdip_nc
+        temp_filename = f"temp_{filename}"
+        path = self.dirs.spectra_cdip_nc
 
-        new_ds.to_netcdf(Path(path, filename))
+        new_ds.to_netcdf(Path(path, temp_filename))
+
+        shutil.move(Path(path, temp_filename), Path(path, filename))
 
     def save_spectra_calc(self, df, station, first_timestamp, last_timestamp):
         path = self.dirs.spectra_calc
