@@ -110,7 +110,7 @@ export default function Home(props: HomeProps) {
                   noWrap
                   sx={{ flexGrow: 1, padding: 1 }}
                 >
-                  Hawaii Time: {getHawaiiTime()}
+                  Hawaii Time: {props.serverDate}
                 </Typography>
               </Box>
             </Grid>
