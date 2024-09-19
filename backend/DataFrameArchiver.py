@@ -7,13 +7,14 @@ class DataFrameArchiver:
         # Ensure we do not modify the original dataframe
         df = df.copy()
 
-        df.to_csv(Path(path, f"{filename}.csv"), index="Timestamp")
-
-        df.to_json(
-            Path(path, f"{filename}.json"),
-            orient="split",
-            index="Timestamp",
-        )
+        # json_path = Path(path, "json")
+        # json_path.mkdir(exist_ok=True, parents=True)
+        #
+        # df.to_json(
+        #     Path(json_path, f"{filename}.json"),
+        #     orient="split",
+        #     index="Timestamp",
+        # )
 
         # Example json output:
         # test = {
@@ -37,6 +38,9 @@ class DataFrameArchiver:
         column_save = df.columns
 
         df.columns = df.columns.astype(str)
-        df.to_parquet(Path(path, f"{filename}.parquet"), index="Timestamp")
+
+        parquet_path = Path(path, "parquet")
+        parquet_path.mkdir(exist_ok=True, parents=True)
+        df.to_parquet(Path(parquet_path, f"{filename}.parquet"), index="Timestamp")
 
         df.columns = column_save
