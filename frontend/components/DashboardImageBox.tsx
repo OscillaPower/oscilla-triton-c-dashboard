@@ -10,10 +10,14 @@ interface DashboardImageBoxProps {
   imageURL: string;
 }
 
-const height = 100;
-const width = 100;
-
 export default function DashboardImageBox(props: DashboardImageBoxProps) {
+  const fallbackSrc = "/img/no_data.png";
+  // These are a best guess
+  const fallbackDim = { height: 15, width: 18 };
+
+  const [imgSrc, setImgSrc] = React.useState(props.imageURL);
+  const [imgDim, setImgDim] = React.useState({ height: 100, width: 100 });
+
   return (
     <Box
       display="flex"
@@ -30,10 +34,18 @@ export default function DashboardImageBox(props: DashboardImageBoxProps) {
         alignItems="center"
         justifyContent="center"
         position="relative"
-        height={`${height}vh`}
-        width={`${width}vw`}
+        height={`${imgDim.height}vh`}
+        width={`${imgDim.width}vw`}
       >
-        <Image src={props.imageURL} alt={props.title} fill />
+        <Image
+          src={imgSrc}
+          alt={props.title}
+          fill
+          onError={() => {
+            setImgSrc(fallbackSrc);
+            setImgDim(fallbackDim);
+          }}
+        />
       </Box>
       <Box>
         <Typography variant="overline">{props.title}</Typography>
