@@ -1,5 +1,7 @@
 import os
+
 from pathlib import Path
+from sys import platform
 
 
 # DirectoryManager abstracts directory names. This provides multiple benefits:
@@ -8,7 +10,7 @@ from pathlib import Path
 #   3. Creates directories that don't exist
 class DirectoryManager:
     def __init__(self):
-        if os.getenv("TRITON_C_SERVER") is not None:
+        if platform == "linux" or platform == "linux2":
             self.base_dir = Path("/home/nrel@oscillapower.local/dashboard")
         else:
             # We should be in the "backend" directory
