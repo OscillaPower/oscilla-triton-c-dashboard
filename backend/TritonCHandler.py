@@ -7,6 +7,7 @@ from CanaryRequester import CanaryRequester
 from DataHandler import DataHandler
 from DirectoryManager import DirectoryManager
 from FileManager import FileManager
+from Logger import Logger
 from SQLite import SQLite
 
 
@@ -19,6 +20,7 @@ class TritonC(DataHandler):
         self.dirs = DirectoryManager()
 
         self.populate_count = {}
+        self.logger = Logger()
 
         self.canary_ip_address = "10.0.2.8"
 
@@ -126,8 +128,15 @@ class TritonC(DataHandler):
     def update_triton_c(self, canary_time_interval):
         self.init_canary_request()
 
-        if self.server != None:
+        if self.server is not None:
             df = self.server.request_all_data(canary_time_interval)
+            if df is None or df.empty is True:
+                self.logger.info(
+                    __name__,
+                    "Canary is running but there is no available data, returning...",
+                )
+                return
+
             self.file_manager.save_triton_c_all(df)
 
             super(TritonC, self).unique_insert(
