@@ -8,6 +8,8 @@ import Image from "next/image";
 import dynamic from "next/dynamic";
 import getConfig from "next/config";
 
+import sqlite3 from "sqlite3";
+
 import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
@@ -21,6 +23,7 @@ import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 
 import DashboardImageBox from "../components/DashboardImageBox";
+import { GPSCoord } from "../components/WECLocationMap";
 import PowerPerformanceChart, {
   PowerPerformanceData,
 } from "../components/PowerPerformanceChart";
@@ -30,7 +33,6 @@ const Item = styled(Paper)(({ theme }) => ({
   textAlign: "center",
   padding: theme.spacing(1),
 }));
-
 
 const gridItemHeight = "600px";
 
@@ -207,13 +209,30 @@ export default function Home(props: HomeProps) {
   );
 }
 
+// Server Side Data Request
+
+interface DBRow {
+  Timestamp: number;
+  Raw_Timestamp: string;
+  GPS_Lat: number;
+  GPS_Lng: number;
+  Is_Deployed: number;
+  Is_Maint: number;
+  PTO_Bow_Power_kW: number;
+  PTO_Starboard_Power_kW: number;
+  PTO_Port_Power_kW: number;
+  Total_Power_kW: number;
+  Mean_Wave_Period: number;
+  Mean_Wave_Height: number;
+}
+
 const convertDateToHawaiiTime = (date: Date): string => {
   // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#options
   return date.toLocaleString("en-US", { timeZone: "Pacific/Honolulu" });
 };
 
-const convertCanaryTimestampToHawaiiTime = (canaryTime: number): string => {
-  const date = new Date(canaryTime);
+const convertUnixTimestampToHawaiiTime = (unixNsTimestamp: number): string => {
+  const date = new Date(unixNsTimestamp / 1000000);
   return convertDateToHawaiiTime(date);
 };
 
@@ -239,91 +258,77 @@ export async function getServerSideProps() {
     dataDir = "/home/nrel@oscillapower.local/dashboard/data";
   }
 
-  function jsonFileFilter(value: string) {
-    const filetype = value.split(".").pop();
-    return filetype == "json";
-  }
+  const db = new sqlite3.Database(dataDir + "/triton_c.db");
 
-  const gpsCoordsDir = path.join(dataDir, "gps_coords");
-  const gpsFiles = fs.readdirSync(gpsCoordsDir);
+  const powerPerformanceQuery =
+    "SELECT * from triton_c WHERE Total_Power_kW IS NOT NULL ORDER BY Timestamp DESC LIMIT 500;";
+  const gpsQuery =
+    "SELECT * from triton_c WHERE GPS_Lat IS NOT NULL AND GPS_Lng IS NOT NULL ORDER BY Timestamp DESC LIMIT 500;";
 
-  // Sort the most recent gps coord files to the to the beginning of the array
-  const gpsJsonFiles = gpsFiles.filter(jsonFileFilter).sort().reverse();
+  const readPowerPerformanceAsync = new Promise(function (resolve, reject) {
+    db.all(powerPerformanceQuery, [], (err, rows: DBRow[]) => {
+      if (err) {
+        reject({ error: err });
+      }
 
-  // timestamp, lat, lng
-  let coords: number[][] = [[0, 0, 0]];
+      const powerPerformance: PowerPerformanceData[] = [];
 
-  for (const gpsFile of gpsJsonFiles) {
-    let rawdata = fs
-      .readFileSync(path.join(dataDir, "gps_coords", gpsFile))
-      .toString();
-    let gps_coords = JSON.parse(rawdata);
-    coords = gps_coords["data"] as number[][];
+      rows.reverse().forEach((row: DBRow) => {
+        const niceTimestamp = convertUnixTimestampToHawaiiTime(
+          row["Timestamp"],
+        );
+        powerPerformance.push({
+          name: niceTimestamp,
+          "PTO Bow kW": row["PTO_Starboard_Power_kW"],
+          "PTO Stbd kW": row["PTO_Starboard_Power_kW"],
+          "PTO Port kW": row["PTO_Bow_Power_kW"],
+          "Total Power kW": row["Total_Power_kW"],
+        });
+      });
 
-    if (coords.length == 0) {
-      continue;
-    } else if (coords[0][1] == 0) {
-      continue;
-    } else {
-      break;
-    }
-  }
-
-  // Filter coords to the 50 most recent coordinates
-  const selectedCoords = coords.slice(-50, -1).map((row) => {
-    return [convertCanaryTimestampToHawaiiTime(row[0]), row[1], row[2]];
+      resolve(powerPerformance);
+    });
   });
 
-  const powerPerformanceDir = path.join(dataDir, "power_performance");
-  const powerPerformanceFiles = fs.readdirSync(powerPerformanceDir);
+  const readGPSAsync = new Promise(function (resolve, reject) {
+    db.all(gpsQuery, [], (err, rows: DBRow[]) => {
+      if (err) {
+        reject({ error: err });
+      }
 
-  // Sort the most recent gps coord files to the to the beginning of the array
-  const powerPerformanceJsonFiles = powerPerformanceFiles
-    .filter(jsonFileFilter)
-    .sort()
-    .reverse();
+      const coords: GPSCoord[] = [];
 
-  // ["Timestamp","Is_Deployed","Is_Maint","Mean_Wave_Period_Te","Mean_Wave_Height_Hm0","PTO_Bow_Power_kW","PTO_Starboard_Power_kW","PTO_Port_Power_kW","Total_Power"]
-  let powerPerformanceData: number[][] = [[]];
+      // rows.reverse().forEach((row: DBRow) => {
+      rows.forEach((row: DBRow) => {
+        if (row["GPS_Lat"] !== undefined && row["GPS_Lng"] !== undefined) {
+          const niceTimestamp = convertUnixTimestampToHawaiiTime(
+            row["Timestamp"],
+          );
+          coords.push({
+            timestamp: niceTimestamp,
+            lat: row["GPS_Lat"],
+            lng: row["GPS_Lng"],
+          });
+        }
+      });
 
-  for (const powerPerformanceFile of powerPerformanceJsonFiles) {
-    let rawdata = fs
-      .readFileSync(path.join(powerPerformanceDir, powerPerformanceFile))
-      .toString();
-    let rawJson = JSON.parse(rawdata);
-    powerPerformanceData = rawJson["data"] as number[][];
+      resolve(coords);
+    });
+  });
 
-    if (powerPerformanceData.length == 0) {
-      continue;
-    } else {
-      break;
-    }
-  }
-
-  // Filter coords to the 50 most recent coordinates
-  const selectedPowerPerformanceData = powerPerformanceData
-    .slice(-500, -1)
-    .reverse();
-
-  const formattedPowerPerformanceData = selectedPowerPerformanceData.map(
-    (row) => {
-      // const rowDate = new Date()
-      // const timestamp = `${rowDate.toLocaleDateString("haw")} ${rowDate.toLocaleTimeString("haw")}`
-      return {
-        name: convertCanaryTimestampToHawaiiTime(row[0]),
-        "PTO Bow kW": row[5],
-        "PTO Stbd kW": row[6],
-        "PTO Port kW": row[7],
-        "Total Power kW": row[8],
-      };
-    }
-  );
-
-  return {
-    props: {
-      serverDate: convertDateToHawaiiTime(serverDate),
-      coords: selectedCoords,
-      powerPerformance: formattedPowerPerformanceData,
-    },
+  const readDBAsync = async function () {
+    return Promise.all([readPowerPerformanceAsync, readGPSAsync]).then(
+      (values) => {
+        return {
+          props: {
+            serverDate: convertDateToHawaiiTime(serverDate),
+            powerPerformance: values[0],
+            coords: values[1],
+          },
+        };
+      },
+    );
   };
+
+  return readDBAsync();
 }
