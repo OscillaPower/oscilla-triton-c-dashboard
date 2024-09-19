@@ -1,5 +1,9 @@
 import traceback
 
+import pandas as pd
+
+from zoneinfo import ZoneInfo
+
 from DirectoryManager import DirectoryManager
 from Logger import Logger
 from SQLite import SQLite
@@ -43,9 +47,9 @@ class Runner:
 
             # These are being run for legacy purposes. If the triton_c table works
             # nominally these commands (and db tables) should be deprecated
-            self.triton_c.update_gps_coords(last_10_min)
-            self.triton_c.update_deployment_state(last_10_min)
-            self.triton_c.update_power_performance(last_10_min)
+            # self.triton_c.update_gps_coords(last_10_min)
+            # self.triton_c.update_deployment_state(last_10_min)
+            # self.triton_c.update_power_performance(last_10_min)
         except Exception as e:
             self.logger.error("collect_WEC_data", e)
 
