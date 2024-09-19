@@ -14,7 +14,7 @@ class PowerMatrixImageGenerator:
         self.dpi = 1200
 
     def build_power_matrix_mean_visualization(
-        self, power_matrix_mean, pto_name, title, date_range
+        self, power_matrix_mean, pto_name, title, date_range, all_ns_timestamps
     ):
         plt.figure(figsize=(8, 8))
         plt.suptitle(title)
@@ -32,6 +32,13 @@ class PowerMatrixImageGenerator:
         )
 
         plt.tight_layout()
+
+        self.file_manager.archive_last_power_matrix(
+            pto_name,
+            self.img_format,
+            start=all_ns_timestamps[0],
+            end=all_ns_timestamps[-1],
+        )
 
         plt.savefig(
             self.file_manager.get_power_matrix_latest_filename(

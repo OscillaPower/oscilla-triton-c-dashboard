@@ -78,6 +78,17 @@ class FileManager:
             f"{pto_name}_power_matrix_latest.{image_format}",
         )
 
+    def archive_last_power_matrix(self, pto_name, image_format, start, end):
+        existing_power_matrix = self.get_power_matrix_latest_filename(
+            pto_name, image_format
+        ).name
+        archive_dir = self.dirs.visualization_archive_dir
+
+        return Path(
+            archive_dir,
+            existing_power_matrix.replace("latest", f"archive_{start}-{end}"),
+        )
+
     def get_log_filepath(self):
         return self.get_filepath_that_may_not_exist(
             self.dirs.log_dir, "Triton_C_Backend_Processes.log"

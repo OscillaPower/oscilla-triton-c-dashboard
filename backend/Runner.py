@@ -114,17 +114,29 @@ class Runner:
 
                 if power_matrix_result is not None:
                     power_matrix_data = power_matrix_result[0]
-                    utc_timestamps = power_matrix_result[1]
+                    nanosecond_timestamps = power_matrix_result[1]
 
-                    earliest_timestamp = utc_timestamps.iloc[0]
-                    latest_timestamp = utc_timestamps.iloc[-1]
+                    earliest_timestamp = nanosecond_timestamps.iloc[0]
+                    latest_timestamp = nanosecond_timestamps.iloc[-1]
+
+                    # Define the Honolulu timezone using zoneinfo
+                    honolulu_tz = ZoneInfo("Pacific/Honolulu")
+
+                    # Convert to Honolulu time
+                    earliest_honolulu_time = earliest_timestamp.astimezone(honolulu_tz)
+                    latest_honolulu_time = latest_timestamp.astimezone(honolulu_tz)
+
+                    # Format the timestamps to the desired string format
+                    earliest_str = earliest_honolulu_time.strftime("%Y-%m-%d %H:%M")
+                    latest_str = latest_honolulu_time.strftime("%Y-%m-%d %H:%M")
 
                     if power_matrix_data is not None:
                         viz_generator.build_power_matrix_mean_visualization(
                             power_matrix_data,
                             pto,
                             f"Triton-C {pto}",
-                            f"{earliest_timestamp} {latest_timestamp}",
+                            f"{earliest_str} to {latest_str} Pacific/Honolulu",
+                            nanosecond_timestamps,
                         )
         except Exception as e:
             self.logger.error("build_visualizations", e)

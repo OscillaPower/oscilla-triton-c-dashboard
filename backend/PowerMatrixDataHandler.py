@@ -172,4 +172,5 @@ class PowerMatrixDataHandler:
 
         PM_mean = wave.performance.power_matrix(LM_mean, JM)
 
-        return (PM_mean, utc_timestamps)
+        # Timestamps are used for filenames?
+        return (PM_mean, combined_df.index.astype("int64"))
