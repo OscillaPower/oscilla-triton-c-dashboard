@@ -103,7 +103,7 @@ class PowerMatrixDataHandler:
 
             average_power_kw = this_hour_power_data[column].mean()
 
-            if average_power_kw != 0 and math.isnan(average_power_kw) == False:
+            if average_power_kw != 0 and math.isnan(average_power_kw) is False:
                 valid_power_kw.append(average_power_kw)
                 valid_timestamps.append(hour_start)
 
