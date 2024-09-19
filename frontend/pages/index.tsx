@@ -170,7 +170,7 @@ export default function Home(props: HomeProps) {
             <Grid item xs={3}>
               <Item>
                 <DashboardImageBox
-                  imageURL="/img/pto_1_pm_mean_latest.svg"
+                  imageURL="/img/viz_latest/Total_Power_kW_power_matrix_latest.svg"
                   title="PTO-All Power Matrix"
                 />
               </Item>
@@ -178,7 +178,7 @@ export default function Home(props: HomeProps) {
             <Grid item xs={3}>
               <Item>
                 <DashboardImageBox
-                  imageURL="/img/pto_1_pm_mean_latest.svg"
+                  imageURL="/img/viz_latest/PTO_Bow_Power_kW_power_matrix_latest.svg"
                   title="PTO-Bow Power Matrix"
                 />
               </Item>
@@ -186,7 +186,7 @@ export default function Home(props: HomeProps) {
             <Grid item xs={3}>
               <Item>
                 <DashboardImageBox
-                  imageURL="/img/pto_2_pm_mean_latest.svg"
+                  imageURL="/img/viz_latest/PTO_Starboard_Power_kW_power_matrix_latest.svg"
                   title="PTO-Starboard Power Matrix"
                 />
               </Item>
@@ -194,7 +194,7 @@ export default function Home(props: HomeProps) {
             <Grid item xs={3}>
               <Item>
                 <DashboardImageBox
-                  imageURL="/img/pto_3_pm_mean_latest.svg"
+                  imageURL="/img/viz_latest/PTO_Port_Power_kW_power_matrix_latest.svg"
                   title="PTO-Port Power Matrix"
                 />
               </Item>
