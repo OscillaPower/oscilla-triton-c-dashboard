@@ -75,7 +75,7 @@ export const WECLocationMap = (props: WECLocationMapProps) => {
 
         <Marker position={[CDIP_BUOY_225_K_BAY_LAT, CDIP_BUOY_225_K_BAY_LNG]}>
           <Tooltip permanent={true} interactive={true}>
-            Observation Buoy
+            CDIP Observation Buoy
             <br />
             <a
               href="http://cdip.ucsd.edu/m/products/?stn=225p1"
@@ -96,8 +96,10 @@ export const WECLocationMap = (props: WECLocationMapProps) => {
             return (
               <React.Fragment key={lat}>
                 <Marker position={[lat, lng]} key={timestamp}>
-                  Test
-                  <Tooltip permanent>{timestamp}</Tooltip>
+                  <Tooltip permanent>
+                    Triton-C <br />
+                    {timestamp}
+                  </Tooltip>
                   <Popup>
                     {timestamp}
                     <br />
