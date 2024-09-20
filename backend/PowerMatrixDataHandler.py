@@ -60,6 +60,8 @@ class PowerMatrixDataHandler:
         min_samples_per_hour = 2 * 60 * 60
         max_time_delta_ns = 1_000_000_000 / 2  # 2Hz
 
+        averaging_frequency = "30min"
+
         # NDBC Buoy Times are in UTC, to match formats we convert our unix epoch ns timestamp to UTC
         power_df.sort_index(inplace=True)
         df = power_df
@@ -70,14 +72,14 @@ class PowerMatrixDataHandler:
         last_timestamp = df["UTC_Timestamp"].iloc[-1]
 
         # Move the first timestamp back to its hour
-        first_timestamp = first_timestamp.floor(freq="H")
+        first_timestamp = first_timestamp.floor(freq=averaging_frequency)
 
         # Move the last timestamp forward to its hour
-        last_timestamp = last_timestamp.ceil(freq="H")
+        last_timestamp = last_timestamp.ceil(freq=averaging_frequency)
 
         # Get all data between the first and last timestamp by hour
         hours_power_data_is_available = pd.date_range(
-            start=first_timestamp, end=last_timestamp, freq="H"
+            start=first_timestamp, end=last_timestamp, freq=averaging_frequency
         )
 
         valid_timestamps = []
