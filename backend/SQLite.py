@@ -117,6 +117,44 @@ SELECT Timestamp, GPS_Lat, GPS_Lng, Is_Deployed, Is_Maint, PTO_Bow_Power_kW, PTO
 
         return self.set_df_timestamp_to_index(df)
 
+    def select_all_triton_c_with_power(self):
+        df = pd.read_sql(
+            f"""
+SELECT Timestamp, GPS_Lat, GPS_Lng, Is_Deployed, Is_Maint, PTO_Bow_Power_kW, PTO_Starboard_Power_kW, PTO_Port_Power_kW, Total_Power_kW, Mean_Wave_Period, Mean_Wave_Height
+    FROM triton_c
+    WHERE Total_Power_kW is not NULL
+    ORDER BY Timestamp DESC;
+""",
+            self.con,
+            index_col="Timestamp",
+        )
+
+        return self.set_df_timestamp_to_index(df)
+
+    def select_all_triton_c_average_power(self):
+        df = pd.read_sql(
+            f"""
+SELECT
+    strftime('%Y-%m-%d %H:', Raw_Timestamp) ||
+    CASE
+        WHEN CAST(strftime('%M', Raw_Timestamp) AS INTEGER) < 30 THEN '00'
+        ELSE '30'
+    END AS HalfHourInterval,
+    AVG(Total_Power_kW) AS Avg_Total_Power_kW
+    AVG(PTO_Bow_Power_kW) AS Avg_PTO_Bow_Power_kW
+    AVG(PTO_Port_Power_kW) AS Avg_PTO_Port_Power_kW
+    AVG(PTO_Starboard_Power_kW) AS Avg_PTO_Starboard_Power_kW
+FROM triton_c
+WHERE Total_Power_kW IS NOT NULL
+GROUP BY HalfHourInterval
+ORDER BY HalfHourInterval DESC;
+""",
+            self.con,
+            index_col="Timestamp",
+        )
+
+        return self.set_df_timestamp_to_index(df)
+
     def select_is_deployed_triton_c(self):
         df = pd.read_sql(
             f"""
