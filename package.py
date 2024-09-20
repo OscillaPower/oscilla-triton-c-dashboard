@@ -246,5 +246,5 @@ class OscillaPackager:
 if __name__ == "__main__":
     packager = OscillaPackager()
 
-    # packager.package_frontend()
+    packager.package_frontend()
     packager.package_backend()
